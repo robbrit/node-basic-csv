@@ -1,11 +1,11 @@
 {
-  "name": "simple-csv",
+  "name": "basic-csv",
   "version" : "0.0.1",
-  "description": "A library designed for simple CSV usage.",
+  "description": "A library designed for basic CSV usage.",
   "author": "Rob Britton <rob@robbritton.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/robbrit/node-simple-csv"
+    "url": "https://github.com/robbrit/node-basic-csv"
   },
   "dependencies" : {
     "csv": "0.3.0",
