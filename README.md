@@ -33,7 +33,7 @@ There are a few options:
     }, function (error, rows) {
       console.log(rows); // same thing, but doesn't include the first row
     });
-    
+
 By default, `basic-csv` assumes that you're handling UTF-8 encoded files,
 and that any number-ish strings that it finds should be converted into the
 proper type. You can change those if you like:
@@ -46,6 +46,17 @@ proper type. You can change those if you like:
     }, function (error, rows) {
       console.log(rows); // same thing, but doesn't include the first row
     });
+
+You can also just parse a string directly:
+
+    var basicCSV = require("basic-csv");
+
+    basicCSV.readCSVFromString("A1,B1,C1\nA2,B2,C2", function (err, rows) {
+      console.log(rows);
+    });
+
+`readCSVFromString` takes the same optional arguments as `readCSV` except for
+`encoding`.
 
 
 Licence

@@ -5,6 +5,57 @@ var csv = require("csv"),
   fs = require("fs");
 
 /*
+ * Read CSV data from a string. Call the callback when it's done.
+ * Possible options:
+ * - parseNumbers (default: true) - parse any ints/floats that are found
+ * - dropHeader (default: false) - remove the first row of the file
+ */
+exports.readCSVFromString = function (csvData, options, callback) {
+  "use strict";
+  if (callback === undefined) {
+    callback = options;
+    options = {};
+  }
+
+  options = _.defaults(options, {
+    parseNumbers: true,
+    dropHeader: false
+  });
+
+  var rows = [],
+    isHeader = true;
+
+  csv()
+    .from(csvData)
+    .transform(function (row) {
+      if (isHeader) {
+        isHeader = false;
+        // ignore the header?
+        if (options.dropHeader) {
+          return row;
+        }
+      }
+
+      rows.push(row.map(function (cell) {
+        if (options.parseNumbers) {
+          if (cell.match(/^-?\d+$/)) {
+            return parseInt(cell, 10);
+          }
+          if (cell.match(/^-?\d+\.\d+(e-?\d+)?$/)) {
+            return parseFloat(cell);
+          }
+        }
+        return cell;
+      }));
+
+      return row;
+    })
+    .on("end", function () {
+      callback(null, rows);
+    });
+};
+
+/*
  * Read a CSV file. Call the callback when it's done.
  * Possible options:
  * - encoding (default: utf-8) - the encoding of the file
@@ -31,36 +82,6 @@ exports.readCSV = function (filename, options, callback) {
       return;
     }
 
-    var rows = [],
-      isHeader = true;
-
-    csv()
-      .from(csvData)
-      .transform(function (row) {
-        if (isHeader) {
-          isHeader = false;
-          // ignore the header?
-          if (options.dropHeader) {
-            return row;
-          }
-        }
-
-        rows.push(row.map(function (cell) {
-          if (options.parseNumbers) {
-            if (cell.match(/^-?\d+$/)) {
-              return parseInt(cell, 10);
-            }
-            if (cell.match(/^-?\d+\.\d+(e-?\d+)?$/)) {
-              return parseFloat(cell);
-            }
-          }
-          return cell;
-        }));
-
-        return row;
-      })
-      .on("end", function () {
-        callback(null, rows);
-      });
+    exports.readCSVFromString(csvData, options, callback);
   });
 };
